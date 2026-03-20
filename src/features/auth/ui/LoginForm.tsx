@@ -4,13 +4,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useLogin } from "../model/useLogin"
 import { useForm } from "react-hook-form";
 import { loginSchema, type LoginFormData } from "../model/login.schema";
-import { Input } from "../../../shared/ui/Input";
+import { Input } from "../../../shared/ui/Input/Input";
 import Logo from '../../../assets/svg/Logo.svg'
 import Lock from '../../../assets/svg/Lock.svg'
-import Eye from '../../../assets/svg/Eye.svg'
-import EyeOff from '../../../assets/svg/EyeOff.svg' // добавьте иконку для скрытого пароля
 import User from '../../../assets/svg/User.svg'
-import Delete from '../../../assets/svg/Delete.svg'
+import Close from '../../../assets/svg/Close.svg'
 
 export const LoginForm = () => {
     const navigate = useNavigate();
@@ -44,10 +42,15 @@ export const LoginForm = () => {
         console.log("FORM DATA:", data)
         mutate(
             {
-                username: 'emilys',
-                password: 'emilyspass',
+                username: data.username,
+                password: data.password,
                 expiresInMins: 30
             },
+            // {
+            //     username: 'emilys',
+            //     password: 'emilyspass',
+            //     expiresInMins: 30
+            // },
             {
                 onSuccess: (response) => {
                     const token = response.token;
@@ -56,7 +59,7 @@ export const LoginForm = () => {
                     } else {
                         sessionStorage.setItem("token", token)
                     }
-                    navigate("/prodacts");
+                    navigate("/products");
                 }
             }
         )
@@ -99,20 +102,18 @@ export const LoginForm = () => {
                                 error={errors.username?.message}
                                 placeholder="Введите логин"
                                 leftIcon={User}
-                                rightIcon={usernameValue ? Delete : undefined} // Показываем Delete только если есть текст
+                                rightIcon={usernameValue ? Close : undefined} // Показываем Delete только если есть текст
                                 onRightIconClick={usernameValue ? handleClearUsername : undefined}
                             />
 
                             {/* Поле Пароль с иконкой Eye для показа/скрытия */}
                             <Input
                                 label="Пароль"
-                                type={showPassword ? 'text' : 'password'}
+                                type="password"
                                 register={register('password')}
                                 error={errors.password?.message}
-                                placeholder="Введите пароль"
                                 leftIcon={Lock}
-                                rightIcon={showPassword ? EyeOff : Eye} // Переключаем иконки
-                                onRightIconClick={handleTogglePassword}
+                                showPasswordToggle
                             />
 
                             {/* Чекбокс и кнопка */}
@@ -131,7 +132,8 @@ export const LoginForm = () => {
                                 <button
                                     type="submit"
                                     disabled={isPending}
-                                    className="w-full bg-blue-600 text-white py-3 px-4 rounded-xl hover:bg-blue-700 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full bg-blue-600 text-white py-3 px-4 rounded-xl hover:bg-blue-700 transition-colors font-medium 
+                                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed LoginButton"
                                 >
                                     {isPending ? "Вход..." : "Войти"}
                                 </button>

@@ -57,7 +57,7 @@
 }
 
 #root {
-  width: 1126px;
+
   max-width: 100%;
   margin: 0 auto;
   text-align: center;
@@ -70,7 +70,7 @@
 
 body {
   margin: 0;
-  color: #232323
+  /* color: #232323 */
 }
 
 h1,
@@ -83,7 +83,11 @@ h1 {
   letter-spacing: -1.5%;
   font-weight: 600;
   line-height: 110%;
-  text-shadow: 0 2px 0 #3e3e3ed1;
+      color: #000000;
+  /* text-shadow: 0 2px 0 #000000d1; */
+filter: drop-shadow(0px 2px 0px #3e3e3e);
+
+  /* text-shadow: 0 2px 0 #3e3e3ed1; */
 
   @media (max-width: 1024px) {
     font-size: 36px;
@@ -134,7 +138,7 @@ code {
 
 }
 
-button {
+.LoginButton {
   background: var(--button);
   border: 1px solid var(--button-border);
   box-shadow: inset 0px -2px 0px rgb(0 0 0 / 8%);
@@ -150,4 +154,13 @@ button {
 
 .border {
   border: 0.5px solid #ededed;
+}
+
+@keyframes progress {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
 }
