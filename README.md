@@ -1,73 +1,169 @@
-# React + TypeScript + Vite
+# Aiti Guru Test Assignment - Product Management Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Тестовое задание для Aiti Guru. Административная панель управления товарами с авторизацией, поиском, сортировкой и пагинацией.
 
-Currently, two official plugins are available:
+## 🚀 Технологии
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **React 18+** с TypeScript
+- **Vite** - сборка проекта
+- **Tailwind CSS** - стилизация
+- **React Router DOM** - маршрутизация
+- **React Hook Form** + **Zod** - валидация форм
+- **TanStack React Query** - управление состоянием API
+- **Axios** - HTTP клиент
+- **React Toastify** - уведомления
 
-## React Compiler
+## 📦 Установка и запуск
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+# Клонирование репозитория
+git clone <repository-url>
+cd aitiguru-test
 
-## Expanding the ESLint configuration
+# Установка зависимостей
+npm install
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+# Запуск в режиме разработки
+npm run dev
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+# Сборка для production
+npm run build
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+# Предпросмотр production сборки
+npm run preview
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+
+🔐 Авторизация
+Страница входа с валидацией полей. Используйте тестовые данные:
+
+Логин	Пароль
+emilys	emilyspass
+✅ Валидация обязательных полей
+
+✅ Обработка ошибок API
+
+✅ Запоминание сессии (localStorage / sessionStorage)
+
+📊 Страница товаров
+
+## Функциональность
+Список товаров - загрузка из DummyJSON API
+
+Поиск - с debounce (500ms) и мгновенной очисткой
+
+Сортировка - по всем колонкам (клик по заголовку)
+
+Пагинация - с выбором количества на странице (10/20/30/50)
+
+Выбор товаров - чекбоксы для массовых операций
+
+Добавление товара - локальное добавление без API (по ТЗ)
+
+Обновление таблицы - кнопка Refresh с анимацией
+
+## Структура таблицы
+Колонка	Описание	Сортировка
+☐	Чекбокс выбора	❌
+📦	Аватарка товара	❌
+Наименование	Название + категория	✅
+Вендор	Бренд товара	✅
+Артикул	SKU код	✅
+Оценка	Рейтинг (красный при <3)	✅
+Цена	Форматированная цена (серые копейки)	✅
+⋯	Действия (edit / menu)	❌
+
+
+## API эндпоинты
+typescript
+GET    /products?limit=10&skip=0&sortBy=title&order=asc
+GET    /products/search?q={query}
+POST   /products/add  // имитация, товар не сохраняется на сервере
+🧩 Компоненты
+UI Components
+Компонент	Описание
+Button	Универсальная кнопка (primary, secondary, ghost)
+IconButton	Кнопка-иконка с размерами
+Input	Поле ввода с поддержкой иконок, пароля и поиска
+InputIconButton	Иконка внутри поля ввода
+TableHeader	Шапка таблицы с сортировкой
+TableCell	Ячейка таблицы
+SortIcon	Иконка сортировки (появляется при наведении)
+Pagination	Компонент пагинации
+RefreshButton	Кнопка обновления с анимацией
+Feature Components
+Компонент	Описание
+LoginForm	Форма авторизации
+ProductsTable	Таблица товаров
+ProductHeader	Заголовок страницы с поиском
+AddProductModal	Модальное окно добавления товара
+
+## Стилизация
+Tailwind CSS с кастомной конфигурацией
+
+Адаптивный дизайн
+
+Анимации (fade-in, zoom-in, spin)
+
+Состояния hover, focus, disabled
+
+Соответствие макету Figma
+
+```
+📁 Структура проекта
+text
+src/
+├── app/                    # Настройки приложения
+├── assets/                 # Статические файлы (SVG)
+├── entities/               # Бизнес-сущности
+│   ├── auth/              # Авторизация
+│   └── product/           # Товары
+├── features/              # Фичи
+│   ├── login-form/        # Форма входа
+│   ├── product-table/     # Таблица товаров
+│   ├── product-search/    # Поиск
+│   └── add-product/       # Добавление товара
+├── pages/                 # Страницы
+│   ├── login/             # Страница входа
+│   └── products/          # Страница товаров
+├── shared/                # Переиспользуемые модули
+│   ├── api/               # API клиент
+│   ├── ui/                # UI компоненты
+│   │   ├── Buttons/       # Кнопки
+│   │   ├── Input/         # Поля ввода
+│   │   ├── Table/         # Таблица
+│   │   └── Pagination/    # Пагинация
+│   └── lib/               # Утилиты
+└── main.tsx               # Точка входа
+
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+🤖 Использование ИИ
+При выполнении задания использовались следующие AI инструменты:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Модель: Claude (Anthropic)
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Основные промпты:
+
+Создание универсального компонента Input с поддержкой поиска и пароля
+Реализация таблицы с сортировкой и пагинацией
+Настройка React Query для работы с API DummyJSON
+Оптимизация производительности (memo, useCallback, useMemo)
+Исправление ошибок TypeScript и бесконечных циклов рендеринга
+
+## TODO / Возможные улучшения
+Добавить редактирование товара
+
+Добавить удаление товара
+
+Сохранение состояния в URL (фильтры, сортировка, страница)
+
+Адаптивная верстка для мобильных устройств
+
+Unit тесты
+
+Dark mode
+
+Разработано для Aiti Guru
+📅 Март 2026
+
+
