@@ -1,72 +1,101 @@
-// entities/product/model/useProduct.tsx (или useProducts.ts)
+// entities/product/model/useProducts.ts
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { getProducts, searchProducts } from '../api/productsApi';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 
 export const useProducts = () => {
-    const [params, setParams] = useState({
-        limit: 30,
-        skip: 0,
-        sortBy: 'title',
-        order: 'asc' as 'asc' | 'desc',
-        search: '',
-    });
+  const [params, setParams] = useState({
+    limit: 10,
+    skip: 0,
+    sortBy: 'title',
+    order: 'asc' as 'asc' | 'desc',
+    search: '',
+  });
 
-    // Основной запрос
-    const {
-        data,
-        isLoading,
-        isFetching,
-        error,
-    } = useQuery({
-        queryKey: ['products', params.sortBy, params.order, params.skip],
-        queryFn: () => getProducts({
-            limit: params.limit,
-            skip: params.skip,
-            sortBy: params.sortBy,
-            order: params.order,
-        }),
-        placeholderData: keepPreviousData, // 👈 Это важно!
+  // Разделяем queryKey для поиска и обычного списка
+  const isSearching = params.search.length > 0;
 
-    });
+  const {
+    data,
+    isLoading,
+    isFetching,
+    error,
+  } = useQuery({
+    // Для поиска используем отдельный queryKey
+    queryKey: isSearching 
+      ? ['products', 'search', params.search]
+      : ['products', params.sortBy, params.order, params.skip, params.limit],
+    queryFn: async () => {
+      if (isSearching) {
+        // Поиск - игнорируем пагинацию
+        const result = await searchProducts(params.search);
+        return result;
+      }
+      // Обычный список с пагинацией
+      return getProducts({
+        limit: params.limit,
+        skip: params.skip,
+        sortBy: params.sortBy,
+        order: params.order,
+      });
+    },
+    placeholderData: keepPreviousData,
+  });
 
-    // Поиск - отдельный запрос, который выполняется только когда есть search
-    const {
-        data: searchData,
-        isLoading: isSearching,
-    } = useQuery({
-        queryKey: ['products', 'search', params.search],
-        queryFn: () => searchProducts(params.search),
-        enabled: params.search.length > 0, // 👈 ВАЖНО: запрос выполняется только если есть поиск
-    });
+  const handleSort = useCallback((sortBy: string) => {
+    setParams(prev => ({
+      ...prev,
+      sortBy,
+      order: prev.sortBy === sortBy && prev.order === 'asc' ? 'desc' : 'asc',
+      skip: 0,
+      search: '', // Сбрасываем поиск при сортировке
+    }));
+  }, []);
 
-    // Используем useCallback чтобы функция не создавалась заново при каждом рендере
-    const handleSort = useCallback((sortBy: string) => {
-        setParams(prev => ({
-            ...prev,
-            sortBy,
-            order: prev.sortBy === sortBy && prev.order === 'asc' ? 'desc' : 'asc',
-        }));
-    }, []);
+  const handleSearch = useCallback((search: string) => {
+    setParams(prev => ({
+      ...prev,
+      search,
+      skip: 0, // Сбрасываем страницу
+    }));
+  }, []);
 
-    // Используем useCallback для поиска
-    const handleSearch = useCallback((search: string) => {
-        setParams(prev => ({ ...prev, search }));
-    }, []);
+  const handlePageChange = useCallback((page: number) => {
+    if (isSearching) return; // При поиске пагинация не работает
+    setParams(prev => ({
+      ...prev,
+      skip: (page - 1) * prev.limit,
+    }));
+  }, [isSearching]);
 
-    // Определяем какие данные показывать
-    const products = params.search ? searchData?.products : data?.products;
-    const total = params.search ? searchData?.total : data?.total;
-    const loading = isLoading || (params.search ? isSearching : false);
+  const handleLimitChange = useCallback((limit: number) => {
+    if (isSearching) return; // При поиске пагинация не работает
+    setParams(prev => ({
+      ...prev,
+      limit,
+      skip: 0,
+    }));
+  }, [isSearching]);
 
-    return {
-        products: products || [],
-        total: total || 0,
-        isLoading: loading,
-        isFetching: isFetching,
-        error,
-        params,
-        handleSort,
-        handleSearch,
-    };
+  const products = data?.products || [];
+  const total = data?.total || 0;
+  const currentPage = Math.floor(params.skip / params.limit) + 1;
+  const totalPages = Math.ceil(total / params.limit);
+
+  return {
+    products,
+    total,
+    isLoading: isLoading && !isSearching,
+    isSearching,
+    isFetching,
+    error,
+    params,
+    currentPage,
+    totalPages,
+    handleSort,
+    handleSearch,
+    handlePageChange,
+    handleLimitChange,
+  };
 };
+

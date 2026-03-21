@@ -53,22 +53,22 @@ export const ProductsTable: React.FC<ProductsTableProps> = ({
     // Чекбокс в заголовке
     {
       key: 'select',
-      label: 'Наименование',
+      label: '',
       sortable: false,
       className: 'w-10',
       renderHeader: () => (
-<>
-        <Input
+
+        <input
           type="checkbox"
           checked={selectAll}
           onChange={handleSelectAll}
           className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
         />
-        {/* <span>Наименование</span> */}
-</>
+
+
       ),
       render: (_, row) => (
-        <Input
+        <input
           type="checkbox"
           checked={selectedRows.has(row.id)}
           onChange={() => handleSelectRow(row.id)}
@@ -115,6 +115,12 @@ export const ProductsTable: React.FC<ProductsTableProps> = ({
       key: 'brand',
       label: 'Вендор',
       sortable: true,
+         render: (value, row) => (
+        <div>
+          <div className="font-medium text-gray-900">{value}</div>
+        </div>
+      ),
+    
     },
     // Артикул
     {
@@ -144,25 +150,54 @@ export const ProductsTable: React.FC<ProductsTableProps> = ({
       label: 'Цена, ₽',
       sortable: true,
       className: 'font-medium',
-      render: (value) => `${value.toLocaleString('ru-RU')} ₽`,
+      render: (value) => {
+        const [integer, decimal] = value.toFixed(2).split('.');
+        return (
+          <span>
+            {parseInt(integer).toLocaleString('ru-RU')}
+            <span className="text-[#B2B3B9]">,{decimal}</span>
+          </span>
+        );
+      },
     },
     // какая-то синяя кнопка
     {
-      key: 'price',
+      key: 'opt',
       label: '',
       sortable: true,
       className: 'font-medium',
-      render: (value) => (<button
+      render: (value) => (
+      <div className='flex gap-6'>
+        <button
         onClick={() => { }}
-        className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700                             
+        className="bg-blue-600 text-white px-2 rounded-full hover:bg-blue-700                             
                             transition-colors flex items-center gap-2"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
         </svg>
 
-      </button>),
+      </button>
+
+        <button
+          onClick={() => { }}
+          className=""
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="#B2B3B9"
+            viewBox="0 0 24 24"
+          >
+            <circle cx="12" cy="12" r="10" stroke="#B2B3B9" strokeWidth={1.5} fill="none" />
+            <circle cx="12" cy="12" r="1.5" fill="#B2B3B9" stroke="none" />
+            <circle cx="8" cy="12" r="1.5" fill="#B2B3B9" stroke="none" />
+            <circle cx="16" cy="12" r="1.5" fill="#B2B3B9" stroke="none" />
+          </svg>
+        </button>
+      </div>),
     },
+ 
   ];
 
   return (

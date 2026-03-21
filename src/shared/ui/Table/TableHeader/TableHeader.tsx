@@ -39,6 +39,7 @@ export const TableHeader: React.FC<ITableHeaderProps> = ({
           <th
             key={column.key}
             className={`
+             
               px-4 py-3 text-left text-sm font-medium text-[#B2B3B9]
               ${column.sortable ? 'cursor-pointer hover:bg-gray-100' : ''}
               transition-colors

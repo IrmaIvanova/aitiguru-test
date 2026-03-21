@@ -33,7 +33,7 @@ export const TableRow: React.FC<ITableRowProps> = ({
           value={row[column.key]}
           column={column}
           row={row}
-          className={column.key === 'price' ? 'font-medium' : ''}
+          className={`${column.key === 'price' ? 'font-medium' : ''} text-black`  }
         />
       ))}
     </tr>

@@ -150,7 +150,14 @@ export const Input: React.FC<IInputProps> = ({
             <div className="relative flex-1">
                 {/* Левая иконка */}
                 {getLeftIcon() && (
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <div className={`absolute 
+                    inset-y-0 
+                    left-0 
+                    pl-[${isSearch ? "20px" : "16px"}]
+
+                    flex 
+                    items-center 
+                    pointer-events-none`}>
                         <img src={getLeftIcon()} alt="" className="w-[24px] h-[19.5px]" />
                     </div>
                 )}
@@ -166,7 +173,7 @@ export const Input: React.FC<IInputProps> = ({
                     className={`
             block 
             w-full
-            ${getLeftIcon() ? 'pl-10' : 'pl-3'} 
+            ${getLeftIcon() ? 'pl-12' : 'pl-3'} 
             ${showRightIcon ? 'pr-10' : 'pr-3'} 
             py-3 
             border 
