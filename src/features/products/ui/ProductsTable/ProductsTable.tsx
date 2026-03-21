@@ -48,44 +48,42 @@ export const ProductsTable: React.FC<ProductsTableProps> = ({
   };
 
 
-  const columns: IColumn[] = [
-    // Чекбокс в заголовке
-    {
-      key: 'select',
-      label: '',
-      sortable: false,
-      className: 'w-10',
-      renderHeader: () => (
-
+const columns: IColumn[] = [
+  // Объединенная колонка: чекбокс + аватарка + наименование
+  {
+    key: 'title',
+    label: 'Наименование',
+    sortable: true,
+    className: 'min-w-[300px]',
+    renderHeader: () => (
+      <div className="flex items-center gap-3">
         <input
           type="checkbox"
           checked={selectAll}
           onChange={handleSelectAll}
           className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
         />
-
-
-      ),
-      render: (_, row) => (
+        <span>Наименование</span>
+        {sortBy === 'title' && (
+          <span className="ml-1">{order === 'asc' ? '↑' : '↓'}</span>
+        )}
+      </div>
+    ),
+    render: (value, row) => (
+      <div className="flex items-center gap-3">
+        {/* Чекбокс */}
         <input
           type="checkbox"
           checked={selectedRows.has(row.id)}
           onChange={() => handleSelectRow(row.id)}
           className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
         />
-      ),
-    },
-    // Аватарка
-    {
-      key: 'thumbnail',
-      label: '',
-      sortable: false,
-      className: 'w-12',
-      render: (value, row) => (
-        <div className="w-10 h-10 rounded-[8px] border-gray-200 bg-[#C4c4c4] overflow-hidden flex-shrink-0">
-          {value ? (
+        
+        {/* Аватарка */}
+        <div className="w-10 h-10 rounded-[8px] border border-gray-200 bg-[#C4C4C4] overflow-hidden flex-shrink-0">
+          {row.thumbnail ? (
             <img
-              src={value}
+              src={row.thumbnail}
               alt={row.title}
               className="w-full h-full object-cover"
             />
@@ -95,109 +93,89 @@ export const ProductsTable: React.FC<ProductsTableProps> = ({
             </div>
           )}
         </div>
-      ),
-    },
-    // Наименование
-    {
-      key: 'title',
-      label: 'Наименование',
-      sortable: true,
-      render: (value, row) => (
+        
+        {/* Наименование и категория */}
         <div>
           <div className="font-medium text-gray-900">{value}</div>
           <div className="text-sm text-[#B2B3B9]">{row.category}</div>
         </div>
-      ),
+      </div>
+    ),
+  },
+  // Вендор
+  {
+    key: 'brand',
+    label: 'Вендор',
+    sortable: true,
+    render: (value) => (
+      <div className="font-medium text-gray-900">{value || '—'}</div>
+    ),
+  },
+  // Артикул
+  {
+    key: 'sku',
+    label: 'Артикул',
+    sortable: true,
+  },
+  // Оценка
+  {
+    key: 'rating',
+    label: 'Оценка',
+    sortable: true,
+    render: (value) => (
+      <>
+        <span className={value < 3 ? 'text-red-600 font-medium' : 'text-gray-700'}>
+          {value}
+        </span>
+        <span className="text-gray-700">/5</span>
+      </>
+    ),
+  },
+  // Цена
+  {
+    key: 'price',
+    label: 'Цена, ₽',
+    sortable: true,
+    className: 'font-medium',
+    render: (value) => {
+      const [integer, decimal] = value.toFixed(2).split('.');
+      return (
+        <span>
+          {parseInt(integer).toLocaleString('ru-RU')}
+          <span className="text-[#B2B3B9]">,{decimal}</span>
+        </span>
+      );
     },
-    // Вендор
-    {
-      key: 'brand',
-      label: 'Вендор',
-      sortable: true,
-         render: (value, row) => (
-        <div>
-          <div className="font-medium text-gray-900">{value}</div>
-        </div>
-      ),
-    
-    },
-    // Артикул
-    {
-      key: 'sku',
-      label: 'Артикул',
-      sortable: true,
-    },
-    // Оценка
-    {
-      key: 'rating',
-      label: 'Оценка',
-      sortable: true,
-      render: (value) => (
-        <>
-          <span className={value < 3 ? 'text-red-600 font-medium' : 'text-gray-700'}>
-            {value}
-          </span>
-          <span className={'text-gray-700'}>
-            /5
-          </span>
-        </>
-      ),
-    },
-    // Цена
-    {
-      key: 'price',
-      label: 'Цена, ₽',
-      sortable: true,
-      className: 'font-medium',
-      render: (value) => {
-        const [integer, decimal] = value.toFixed(2).split('.');
-        return (
-          <span>
-            {parseInt(integer).toLocaleString('ru-RU')}
-            <span className="text-[#B2B3B9]">,{decimal}</span>
-          </span>
-        );
-      },
-    },
-    // какая-то синяя кнопка
-    {
-      key: 'opt',
-      label: '',
-      sortable: true,
-      className: 'font-medium',
-      render: (value) => (
-      <div className='flex gap-6'>
+  },
+  // Действия
+  {
+    key: 'actions',
+    label: '',
+    sortable: false,
+    className: 'w-20',
+    render: () => (
+      <div className="flex gap-2">
         <button
-        onClick={() => { }}
-        className="bg-blue-600 text-white px-2 rounded-full hover:bg-blue-700                             
-                            transition-colors flex items-center gap-2"
-      >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-        </svg>
-
-      </button>
-
-        <button
-          onClick={() => { }}
-          className=""
+          onClick={() => {}}
+          className="p-1 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
         >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="#B2B3B9"
-            viewBox="0 0 24 24"
-          >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+        </button>
+
+        <button onClick={() => {}} className="p-1">
+          <svg className="w-5 h-5" fill="none" stroke="#B2B3B9" viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="10" stroke="#B2B3B9" strokeWidth={1.5} fill="none" />
             <circle cx="12" cy="12" r="1.5" fill="#B2B3B9" stroke="none" />
             <circle cx="8" cy="12" r="1.5" fill="#B2B3B9" stroke="none" />
             <circle cx="16" cy="12" r="1.5" fill="#B2B3B9" stroke="none" />
           </svg>
         </button>
-      </div>),
-    },
- 
-  ];
+      </div>
+    ),
+  },
+];
 
   return (
     <div className="overflow-x-auto">
