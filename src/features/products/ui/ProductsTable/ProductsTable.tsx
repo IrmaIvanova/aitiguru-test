@@ -4,7 +4,6 @@ import type { IProduct } from '../../../products/api/productsApi';
 // import { columns } from './constantHeader'
 // import { TableRow } from '../../../../shared/ui/Table/TableRows/TablRows';
 import { TableCell } from '../../../../shared/ui/Table/TableCell/TableCell';
-import { Input } from '../../../../shared/ui/Input';
 
 
 

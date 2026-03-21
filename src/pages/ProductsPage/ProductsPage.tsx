@@ -9,7 +9,7 @@ import { AddProductModal } from '../../features/products/ui/AddProductModal/AddP
 import { Pagination } from '../../shared/ui/Pagination/Pagination';
 
 export const ProductsPage: React.FC = () => {
-  const {
+   const {
     products,
     total,
     isLoading,
@@ -22,13 +22,24 @@ export const ProductsPage: React.FC = () => {
     handleSearch,
     handlePageChange,
     handleLimitChange,
+    addProduct, // 👈 Добавьте в useProducts
   } = useProducts();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleAddProduct = (data: any) => {
-    // addProduct(data);
-    toast.success('Товар успешно добавлен! 🎉');
+    // Сохраняем локально (без API)
+    addProduct(data);
+    
+    // Показываем уведомление
+    toast.success('Товар успешно добавлен! 🎉', {
+      position: 'bottom-right',
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
   };
 
   // Состояние загрузки только при первой загрузке
