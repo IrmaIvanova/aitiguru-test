@@ -74,7 +74,7 @@ export const ProductsPage: React.FC = () => {
 
         <div className="bg-[#fff] px-[30px] py-[26px] rounded-[10px]">
           <div className="flex justify-between items-center mb-6">
-            <p className="text-gray-600 font-medium">Все позиции</p>
+            <p className="text-black font-medium">Все позиции</p>
             <div className="flex items-center gap-3">
               <RefreshButton
                 onRefresh={handleRefresh}
