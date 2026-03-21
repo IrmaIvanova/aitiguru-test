@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { TableHeader, type IColumn } from '../../../../shared/ui/Table/TableHeader';
 import type { IProduct } from '../../../products/api/productsApi';
-// import { columns } from './constantHeader'
-// import { TableRow } from '../../../../shared/ui/Table/TableRows/TablRows';
 import { TableCell } from '../../../../shared/ui/Table/TableCell/TableCell';
+import { SortIcon } from '../../../../shared/ui/Table/SortIcon';
 
 
 
@@ -64,9 +63,11 @@ const columns: IColumn[] = [
           className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
         />
         <span>Наименование</span>
-        {sortBy === 'title' && (
-          <span className="ml-1">{order === 'asc' ? '↑' : '↓'}</span>
-        )}
+          <SortIcon
+          sortBy={sortBy}
+          columnKey="title"
+          order={order}
+        />
       </div>
     ),
     render: (value, row) => (
