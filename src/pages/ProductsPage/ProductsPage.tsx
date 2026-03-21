@@ -7,7 +7,9 @@ import { ProductsTable } from '../../features/products/ui/ProductsTable/Products
 import { ProductHeader } from '../../features/products/ui/ProductHeader/ProductHeader';
 import { AddProductModal } from '../../features/products/ui/AddProductModal/AddProductModal';
 import { Pagination } from '../../shared/ui/Pagination/Pagination';
-import { RefreshButton } from '../../shared/ui/RefreshButton/RefreshButton';
+import { RefreshButton } from '../../shared/ui/Buttons/RefreshButton/RefreshButton';
+import { Button } from '../../shared/ui/Buttons/Button';
+import { PlusIcon } from '../../shared/ui/Icons/PlusIcon/PlusIcon';
 
 export const ProductsPage: React.FC = () => {
   const {
@@ -76,18 +78,17 @@ export const ProductsPage: React.FC = () => {
             <div className="flex items-center gap-3">
               <RefreshButton
                 onRefresh={handleRefresh}
-                // isLoading={isRefreshing || isFetching}
+              // isLoading={isRefreshing || isFetching}
               />
-              <button
+              <Button
+                variant='primary'
                 onClick={() => setIsModalOpen(true)}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                leftIcon={
+                  <PlusIcon className="w-5 h-5" />
+                }
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth={1.5} fill="none" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v8M8 12h8" />
-                </svg>
                 Добавить
-              </button>
+              </Button>
             </div>
           </div>
 

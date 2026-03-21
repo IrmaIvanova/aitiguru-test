@@ -1,6 +1,7 @@
 import React from 'react';
-import { ChevronRight } from '../Icons/ChevronLeft/ChevronRight/ChevroneRight';
+import { ChevronRight } from '../Icons/ChevronRight/ChevroneRight';
 import { ChevronLeft } from '../Icons/ChevronLeft/ChevronLeft';
+import { IconButton } from '../Buttons/IconButton.tsx/IconButton';
 
 interface PaginationProps {
     currentPage: number;
@@ -61,14 +62,13 @@ export const Pagination: React.FC<PaginationProps> = ({
         )} */}
 
                 <div className="flex items-center gap-2">
-                    <button
+                    <IconButton
+                        icon={<ChevronLeft className="w-4 h-4" />}
                         onClick={() => onPageChange(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className="px-3 py-1 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                        <ChevronLeft className="w-4 h-4" />
-
-                    </button>
+                        variant="ghost"
+                        size="sm"
+                    />
 
                     {getPageNumbers().map(page => (
                         <button
@@ -82,15 +82,14 @@ export const Pagination: React.FC<PaginationProps> = ({
                             {page}
                         </button>
                     ))}
+                    <IconButton
+                        icon={<ChevronRight className="w-4 h-4" />}
+                        onClick={() => onPageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        variant="ghost"
+                        size="sm"
+                    />
 
-                    <button
-                        onClick={() => onPageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                        className="px-3 py-1  rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                        <ChevronRight className="w-4 h-4" />
-
-                    </button>
                 </div>
             </div>
         </div>

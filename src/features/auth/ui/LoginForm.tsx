@@ -9,6 +9,7 @@ import Logo from '../../../assets/svg/Logo.svg'
 import Lock from '../../../assets/svg/Lock.svg'
 import User from '../../../assets/svg/User.svg'
 import Close from '../../../assets/svg/Close.svg'
+import { Button } from '../../../shared/ui/Buttons/Button';
 
 export const LoginForm = () => {
     const navigate = useNavigate();
@@ -129,14 +130,15 @@ export const LoginForm = () => {
                                     </label>
                                 </div>
 
-                                <button
+                                <Button
+                                    variant='primary'
                                     type="submit"
                                     disabled={isPending}
-                                    className="w-full bg-blue-600 text-white py-3 px-4 rounded-xl hover:bg-blue-700 transition-colors font-medium 
-                                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed LoginButton"
+                                // className="w-full bg-blue-600 text-white py-3 px-4 rounded-xl hover:bg-blue-700 transition-colors font-medium 
+                                // focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed LoginButton"
                                 >
                                     {isPending ? "Вход..." : "Войти"}
-                                </button>
+                                </Button>
                             </div>
 
                             {/* Разделитель */}

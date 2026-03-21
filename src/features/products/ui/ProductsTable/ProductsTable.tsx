@@ -158,7 +158,7 @@ const columns: IColumn[] = [
       <div className="flex gap-2">
         <button
           onClick={() => {}}
-          className="p-1 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
+          className="px-4 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />

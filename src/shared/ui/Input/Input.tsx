@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+// shared/ui/Input/Input.tsx
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Eye from '../../../assets/svg/Eye.svg';
 import EyeOff from '../../../assets/svg/EyeOff.svg';
 import Search from '../../../assets/svg/Search.svg';
@@ -6,22 +7,15 @@ import Close from '../../../assets/svg/Close.svg';
 import type { UseFormRegisterReturn } from 'react-hook-form';
 
 export interface IInputProps {
-    // Для формы (react-hook-form)
     label?: string;
     type?: 'text' | 'password' | 'email' | 'number' | 'search';
     register?: UseFormRegisterReturn;
     error?: string;
-
-    // Для поиска
     onSearch?: (value: string) => void;
     debounceMs?: number;
     initialValue?: string;
-
-    // Для uncontrolled режима (без react-hook-form)
     value?: string;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-
-    // Общие пропсы
     placeholder?: string;
     leftIcon?: string;
     rightIcon?: string;
@@ -31,22 +25,15 @@ export interface IInputProps {
 }
 
 export const Input: React.FC<IInputProps> = ({
-    // Форма
     label,
     type = 'text',
     register,
     error,
-
-    // Поиск
     onSearch,
     debounceMs = 500,
     initialValue = '',
-
-    // Uncontrolled
     value: externalValue,
     onChange: externalOnChange,
-
-    // Общие
     placeholder,
     leftIcon,
     rightIcon,
@@ -57,21 +44,59 @@ export const Input: React.FC<IInputProps> = ({
     const [showPassword, setShowPassword] = useState(false);
     const [searchTerm, setSearchTerm] = useState(initialValue);
 
+    // Refs для отслеживания предыдущих значений
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const previousSearchTermRef = useRef(initialValue);
     const isSearch = type === 'search' || !!onSearch;
     const isFormField = !!register;
 
-    // Debounce для поиска
+    // Немедленный вызов onSearch для пустой строки
+    const triggerSearch = useCallback((value: string, immediate: boolean = false) => {
+        if (!onSearch) return;
+
+        if (immediate) {
+            // Очищаем таймер
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+            console.log('🔍 Immediate search:', value);
+            onSearch(value);
+        } else {
+            // Debounced search
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+            timeoutRef.current = setTimeout(() => {
+                console.log('🔍 Debounced search:', value);
+                onSearch(value);
+            }, debounceMs);
+        }
+    }, [onSearch, debounceMs]);
+
+    // Следим за изменением searchTerm
     useEffect(() => {
         if (!isSearch || !onSearch) return;
 
-        const timer = setTimeout(() => {
-            if (searchTerm !== initialValue) {
-                onSearch(searchTerm);
-            }
-        }, debounceMs);
+        const newValue = searchTerm;
+        const previousValue = previousSearchTermRef.current;
 
-        return () => clearTimeout(timer);
-    }, [searchTerm, onSearch, initialValue, debounceMs, isSearch]);
+        // Если поле стало пустым - вызываем сразу
+        if (newValue === '' && previousValue !== '') {
+            triggerSearch('', true);
+        }
+        // Если поле не пустое - debounce
+        else if (newValue !== '') {
+            triggerSearch(newValue, false);
+        }
+
+        previousSearchTermRef.current = newValue;
+
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+        };
+    }, [searchTerm, isSearch, onSearch, triggerSearch]);
 
     // Обработчик изменения значения
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,7 +114,9 @@ export const Input: React.FC<IInputProps> = ({
     // Очистка поля поиска
     const handleClearSearch = () => {
         setSearchTerm('');
+        // Немедленный вызов при клике на крестик
         if (onSearch) {
+            console.log('🔍 Clear search immediately');
             onSearch('');
         }
     };
@@ -107,9 +134,6 @@ export const Input: React.FC<IInputProps> = ({
 
     // Определяем правую иконку
     const getRightIcon = () => {
-        if (type === "text") {
-            return Close;
-        }
         if (showPasswordToggle) {
             return showPassword ? EyeOff : Eye;
         }
@@ -136,11 +160,10 @@ export const Input: React.FC<IInputProps> = ({
         : (externalValue !== undefined ? externalValue : undefined);
 
     // Показывать ли правую иконку
-    const showRightIcon = !!(rightIcon || showPasswordToggle || type === "text" || (isSearch && searchTerm));
+    const showRightIcon = !!(rightIcon || showPasswordToggle || (isSearch && searchTerm));
 
     return (
-        <div className="space-y-[6px] ">
-            {/* Лейбл */}
+        <div className="space-y-[6px]">
             {label && (
                 <label className="block text-sm text-left font-medium text-[#232323]">
                     {label}
@@ -150,20 +173,12 @@ export const Input: React.FC<IInputProps> = ({
             <div className="relative flex-1">
                 {/* Левая иконка */}
                 {getLeftIcon() && (
-                    <div className={`absolute 
-                    inset-y-0 
-                    left-0 
-                    pl-[${isSearch ? "20px" : "16px"}]
-
-                    flex 
-                    items-center 
-                    pointer-events-none`}>
+                    <div className={`absolute inset-y-0 left-0 pl-[${isSearch ? "20px" : "16px"}] flex items-center pointer-events-none`}>
                         <img src={getLeftIcon()} alt="" className="w-[24px] h-[19.5px]" />
                     </div>
                 )}
 
                 {/* Поле ввода */}
-
                 <input
                     type={inputType}
                     {...(isFormField ? register : {})}
@@ -171,34 +186,33 @@ export const Input: React.FC<IInputProps> = ({
                     onChange={handleChange}
                     placeholder={placeholder}
                     className={`
-            block 
-            w-full
-            ${getLeftIcon() ? 'pl-12' : 'pl-3'} 
-            ${showRightIcon ? 'pr-10' : 'pr-3'} 
-            py-3 
-            border 
-            ${error ? 'border-red-300' : 'border-gray-300'} 
-            rounded-[${isSearch ? "8px" : "12px"}]
-            ${isSearch && "bg-[#F3F3F3]"}
-                focus:outline-none
-                focus:ring-2
-                focus:ring-blue-500
-                focus:border-transparent
-                transition-all
-                ${className}
-          `}
+                        block 
+                        w-full
+                        ${getLeftIcon() ? 'pl-12' : 'pl-3'} 
+                        ${showRightIcon ? 'pr-10' : 'pr-3'} 
+                        py-3 
+                        border 
+                        ${error ? 'border-red-300' : 'border-gray-300'} 
+                        rounded-[${isSearch ? "8px" : "12px"}]
+                        ${isSearch && "bg-[#F3F3F3]"}
+                        focus:outline-none
+                        focus:ring-2
+                        focus:ring-blue-500
+                        focus:border-transparent
+                        transition-all
+                        ${className}
+                    `}
                 />
-                
 
                 {/* Правая иконка */}
                 {showRightIcon && (
                     <button
                         type="button"
                         className={`
-              absolute inset-y-0 right-0 pr-[16px] flex items-center
-              ${(showPasswordToggle || onRightIconClick || (isSearch && searchTerm)) ? 'cursor-pointer' : 'pointer-events-none'}
-              focus:outline-none
-            `}
+                            absolute inset-y-0 right-0 pr-[16px] flex items-center
+                            ${(showPasswordToggle || onRightIconClick || (isSearch && searchTerm)) ? 'cursor-pointer' : 'pointer-events-none'}
+                            focus:outline-none
+                        `}
                         onClick={handleRightClick}
                     >
                         <img
