@@ -106,6 +106,14 @@ export const useProducts = () => {
     }));
   }, [isSearching]);
 
+  // Функция обновления
+  const refetch = useCallback(() => {
+    if (isSearching) {
+      return searchQuery.refetch();
+    }
+    return listQuery.refetch();
+  }, [isSearching, searchQuery.refetch, listQuery.refetch]);
+
   return {
     products,
     total,
@@ -121,5 +129,6 @@ export const useProducts = () => {
     handlePageChange,
     handleLimitChange,
     addProduct,
+    refetch
   };
 };

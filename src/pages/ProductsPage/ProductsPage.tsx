@@ -7,30 +7,41 @@ import { ProductsTable } from '../../features/products/ui/ProductsTable/Products
 import { ProductHeader } from '../../features/products/ui/ProductHeader/ProductHeader';
 import { AddProductModal } from '../../features/products/ui/AddProductModal/AddProductModal';
 import { Pagination } from '../../shared/ui/Pagination/Pagination';
+import { RefreshButton } from '../../shared/ui/RefreshButton/RefreshButton';
 
 export const ProductsPage: React.FC = () => {
-   const {
+  const {
     products,
     total,
     isLoading,
-    isSearching,
     isFetching,
     params,
     currentPage,
     totalPages,
+    isSearching,
+
     handleSort,
     handleSearch,
     handlePageChange,
     handleLimitChange,
-    addProduct, // 👈 Добавьте в useProducts
+    addProduct,
+    refetch, // 👈 Добавьте refetch из useProducts
   } = useProducts();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await refetch();
+    toast.info('Таблица обновлена');
+    setTimeout(() => setIsRefreshing(false), 500);
+  };
 
   const handleAddProduct = (data: any) => {
     // Сохраняем локально (без API)
     addProduct(data);
-    
+
     // Показываем уведомление
     toast.success('Товар успешно добавлен! 🎉', {
       position: 'bottom-right',
@@ -61,17 +72,23 @@ export const ProductsPage: React.FC = () => {
 
         <div className="bg-[#fff] px-[30px] py-[26px] rounded-[10px]">
           <div className="flex justify-between items-center mb-6">
-            <p className="text-gray-600">Все позиции</p>
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth={1.5} fill="none" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v8M8 12h8" />
-              </svg>
-              Добавить
-            </button>
+            <p className="text-gray-600 font-medium">Все позиции</p>
+            <div className="flex items-center gap-3">
+              <RefreshButton
+                onRefresh={handleRefresh}
+                // isLoading={isRefreshing || isFetching}
+              />
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth={1.5} fill="none" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v8M8 12h8" />
+                </svg>
+                Добавить
+              </button>
+            </div>
           </div>
 
           {/* Таблица */}

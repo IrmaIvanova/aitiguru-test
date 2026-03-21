@@ -180,7 +180,7 @@ const columns: IColumn[] = [
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full">
+      <table className="w-full table-fixed">
         <TableHeader
           columns={columns}
           sortBy={sortBy}
